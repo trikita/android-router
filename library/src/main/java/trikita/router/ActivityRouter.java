@@ -23,12 +23,23 @@ public class ActivityRouter {
 		return sInstance;
 	}
 
+	// TODO validate uri, throw RuntimeException if it's invalid
 	public ActivityRouter add(String uri, Class<? extends Activity> a) {
 		mRouting.add(new Pair(uri, a));
 		return this;
 	}
 
-	public boolean route(String uri, Context c) {
+	public boolean route(Context c, String uri) {
+		Intent intent = findRoute(c, uri);
+		if (intent == null) {
+			return false;
+		}
+		// navigate to the matched activity
+		c.startActivity(intent);
+		return true;
+	}
+
+	Intent findRoute(Context c, String uri) {
 		Map<String, String> properties = new HashMap<String, String>();
 
 		for (Pair<String, Class<? extends Activity>> entry : mRouting) {
@@ -41,12 +52,9 @@ public class ActivityRouter {
 				for (Map.Entry<String, String> p : properties.entrySet()) {
 					intent.putExtra(p.getKey(), p.getValue());
 				}
-
-				// navigate to the matched activity
-				c.startActivity(intent);
-				return true;
+				return intent;
 			}
 		}
-		return false;
+		return null;
 	}
 }
