@@ -2,6 +2,7 @@ package trikita.router;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.util.Property;
@@ -15,7 +16,16 @@ import java.lang.reflect.InvocationTargetException;
 public class ViewRouter {
 	private final static String tag = "ViewRouter";
 
+	public final static int NO_HISTORY = 1;
+
+	// Bundle keys
+	final static String KEY_CLASSNAME = "className";
+	final static String KEY_STATE = "state";
+	final static String KEY_BACKSTACK = "backstack";
+
 	private ViewGroup mParent;
+
+	private ArrayList<String> mBackstack = new ArrayList<>();
 
 	private List<Pair<String, Class<? extends View>>> mRouting =
 		new ArrayList<>();
@@ -29,9 +39,57 @@ public class ViewRouter {
 		a.setContentView(mParent);
 	}
 
+	// TODO validate uri, throw RuntimeException if it's invalid
 	public ViewRouter add(String uri, Class<? extends View> a) {
 		mRouting.add(new Pair(uri, a));
 		return this;
+	}
+
+	public boolean route(String uri) {
+		return route(uri, 0);
+	}
+
+	public boolean route(String uri, int flags) {
+		Map<String, String> properties = new HashMap<String, String>();
+
+		for (Pair<String, Class<? extends View>> entry : mRouting) {
+			properties.clear();
+
+			if (Utils.matchUri(uri, entry.first, properties)) {
+				View v = createView(entry.second, properties);
+
+				if ((flags & NO_HISTORY) == 0) {
+					mBackstack.add(uri);
+				}
+
+				// navigate to the matched view
+				mParent.removeAllViews();
+				mParent.addView(v);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void save(Bundle b) {
+		b.putStringArrayList(KEY_BACKSTACK, mBackstack);
+	}
+
+	public void load(Bundle b) {
+		for (String uri : b.getStringArrayList(KEY_BACKSTACK)) {
+			route(uri);
+		}
+	}
+
+	public boolean back() {
+		if (mBackstack.size() > 1) {
+			mBackstack.remove(mBackstack.size() - 1);
+			if (mBackstack.size() > 0) {
+				route(mBackstack.get(mBackstack.size() - 1), NO_HISTORY);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private <T extends View> T createView(Class<T> cls, Map<String, String> props) {
@@ -48,22 +106,5 @@ public class ViewRouter {
 				IllegalAccessException|InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public boolean route(String uri) {
-		Map<String, String> properties = new HashMap<String, String>();
-
-		for (Pair<String, Class<? extends View>> entry : mRouting) {
-			properties.clear();
-
-			if (Utils.matchUri(uri, entry.first, properties)) {
-				View v = createView(entry.second, properties);
-				// navigate to the matched view
-				mParent.removeAllViews();
-				mParent.addView(v);
-				return true;
-			}
-		}
-		return false;
 	}
 }

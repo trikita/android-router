@@ -108,4 +108,32 @@ public class ViewRouterTest extends AndroidTestCase {
 		assertEquals(BazView.class, root.getChildAt(0).getClass());
 		assertEquals("/hello/world", ((BazView) root.getChildAt(0)).uriRemainder);
 	}
+
+	@Test
+	public void testBackstack() {
+		FrameLayout root = new FrameLayout(getContext());
+		ViewRouter r = new ViewRouter(root)
+			.add("/", BazView.class)
+			.add("/foo", FooView.class)
+			.add("/foo/:uid", BarView.class);
+		r.route("/");
+		r.route("/foo/123");
+		r.route("/foo");
+		r.route("/foo/456");
+
+		assertEquals(BarView.class, root.getChildAt(0).getClass());
+
+		assertTrue(r.back());
+		assertEquals(FooView.class, root.getChildAt(0).getClass());
+
+		assertTrue(r.back());
+		assertEquals(BarView.class, root.getChildAt(0).getClass());
+		assertEquals("123", ((BarView) root.getChildAt(0)).uid);
+
+		assertTrue(r.back());
+		assertEquals(BazView.class, root.getChildAt(0).getClass());
+
+		assertFalse(r.back());
+		assertFalse(r.back());
+	}
 }
