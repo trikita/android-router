@@ -1,6 +1,7 @@
 package trikita.router;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.test.AndroidTestCase;
 import android.util.AttributeSet;
 import android.util.Property;
@@ -135,5 +136,37 @@ public class ViewRouterTest extends AndroidTestCase {
 
 		assertFalse(r.back());
 		assertFalse(r.back());
+	}
+
+	@Test
+	public void testBackstackPersistent() {
+		ViewRouter r1 = new ViewRouter(new FrameLayout(getContext()))
+			.add("/", BazView.class)
+			.add("/:uid", FooView.class);
+		r1.route("/");
+		r1.route("/123");
+		r1.route("/456");
+
+		Bundle b = new Bundle();
+		r1.save(b);
+
+		FrameLayout root = new FrameLayout(getContext());
+		ViewRouter r2 = new ViewRouter(root)
+			.add("/", BazView.class)
+			.add("/:uid", FooView.class);
+		r2.load(b);
+
+		assertEquals(FooView.class, root.getChildAt(0).getClass());
+		assertEquals("456", ((FooView) root.getChildAt(0)).uid);
+
+		assertTrue(r2.back());
+		assertEquals(FooView.class, root.getChildAt(0).getClass());
+		assertEquals("123", ((FooView) root.getChildAt(0)).uid);
+
+		assertTrue(r2.back());
+		assertEquals(BazView.class, root.getChildAt(0).getClass());
+
+		assertFalse(r2.back());
+		assertFalse(r2.back());
 	}
 }
