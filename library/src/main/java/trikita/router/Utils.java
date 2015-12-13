@@ -1,15 +1,11 @@
 package trikita.router;
 
 import java.util.Map;
-import android.util.Log;
 
 public class Utils {
 	private final static String tag = "Utils";
 
 	public static boolean matchUri(String uri, String route, Map<String, String> properties) {
-		Log.d(tag, "uri: \""+uri+"\"");
-		Log.d(tag, "route: \""+route+"\"");
-
 		if (route.length() == 0 || uri.length() == 0) {
 			return false;
 		}
@@ -48,14 +44,9 @@ public class Utils {
 				newUriIndex = uri.length();
 				uriEnded = true;
 			}
-			Log.d(tag, "lu="+lastUriIndex+" nu="+newUriIndex);
-			Log.d(tag, "lr="+lastRouteIndex+" nr="+newRouteIndex);
 
 			String routeToken = route.substring(lastRouteIndex+1, newRouteIndex);
 			String token = uri.substring(lastUriIndex+1, newUriIndex);
-
-			Log.d(tag, "uri token="+token);
-			Log.d(tag, "route token="+routeToken);
 
 			// copy uri params into the properties
 			if (routeToken.startsWith(":")) {
