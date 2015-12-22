@@ -1,4 +1,7 @@
 language: android
 
+env:
+    - TERM=dumb
+
 script:
     - gradle library:check --stacktrace
