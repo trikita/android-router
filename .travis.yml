@@ -10,4 +10,4 @@ env:
     - TERM=dumb
 
 script:
-    - gradle library:check --stacktrace
+    - ./gradlew library:check --stacktrace
