@@ -1,0 +1,4 @@
+language: android
+
+script:
+    - gradle library:check --stacktrace
