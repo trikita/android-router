@@ -10,8 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import java.util.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+import java.util.WeakHashMap;
 
 public class ViewRouter {
 	private final static String tag = "ViewRouter";
@@ -22,6 +23,8 @@ public class ViewRouter {
 	final static String KEY_CLASSNAME = "className";
 	final static String KEY_STATE = "state";
 	final static String KEY_BACKSTACK = "backstack";
+
+	private static final Map<Activity, ViewRouter> CACHE = new WeakHashMap<>();
 
 	private ViewGroup mParent;
 
@@ -35,8 +38,13 @@ public class ViewRouter {
 	}
 
 	public ViewRouter(Activity a) {
+		CACHE.put(a, this);
 		mParent = new FrameLayout(a);
 		a.setContentView(mParent);
+	}
+
+	public static ViewRouter get(View v) {
+		return CACHE.get(v.getContext());
 	}
 
 	// TODO validate uri, throw RuntimeException if it's invalid
