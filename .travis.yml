@@ -1,0 +1,13 @@
+language: android
+
+android:
+    components:
+        - tools
+        - build-tools-22.0.1
+        - android-23
+
+env:
+    - TERM=dumb
+
+script:
+    - ./gradlew library:check --stacktrace
