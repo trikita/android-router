@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.WeakHashMap;
 
@@ -24,7 +25,7 @@ public class ViewRouter {
 	final static String KEY_STATE = "state";
 	final static String KEY_BACKSTACK = "backstack";
 
-	private static final Map<Activity, ViewRouter> CACHE = new WeakHashMap<>();
+	private static final Map<Activity, WeakReference<ViewRouter>> CACHE = new WeakHashMap<>();
 
 	private ViewGroup mParent;
 
@@ -38,13 +39,14 @@ public class ViewRouter {
 	}
 
 	public ViewRouter(Activity a) {
-		CACHE.put(a, this);
+		CACHE.put(a, new WeakReference<>(this));
 		mParent = new FrameLayout(a);
 		a.setContentView(mParent);
 	}
 
 	public static ViewRouter get(View v) {
-		return CACHE.get(v.getContext());
+		WeakReference<ViewRouter> ref = CACHE.get(v.getContext());
+		return (ref != null ? ref.get() : null);
 	}
 
 	// TODO validate uri, throw RuntimeException if it's invalid
