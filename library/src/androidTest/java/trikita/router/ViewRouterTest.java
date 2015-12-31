@@ -3,7 +3,6 @@ package trikita.router;
 import android.content.Context;
 import android.os.Bundle;
 import android.test.AndroidTestCase;
-import android.util.AttributeSet;
 import android.util.Property;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -16,23 +15,17 @@ public class ViewRouterTest extends AndroidTestCase {
 	public static class BazView extends View {
 		public String uid;
 		public String uriRemainder;
-		public BazView(Context c, AttributeSet attrs) {
-			super(c, attrs);
-		}
+		public BazView(Context c) { super(c); }
 	}
 	public static class FooView extends View {
 		public String uid;
 		public String name;
-		public FooView(Context c, AttributeSet attrs) {
-			super(c, attrs);
-		}
+		public FooView(Context c) { super(c); }
 	}
 	public static class BarView extends View {
 		public String uid;
 		public String uriRemainder;
-		public BarView(Context c, AttributeSet attrs) {
-			super(c, attrs);
-		}
+		public BarView(Context c) { super(c); }
 	}
 
 	@Test

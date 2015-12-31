@@ -3,7 +3,6 @@ package trikita.router;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Pair;
 import android.util.Property;
 import android.view.View;
@@ -104,8 +103,7 @@ public class ViewRouter {
 
 	private <T extends View> T createView(Class<T> cls, Map<String, String> props) {
 		try {
-			T v = cls.getConstructor(Context.class, AttributeSet.class)
-				.newInstance(mParent.getContext(), null);
+			T v = cls.getConstructor(Context.class).newInstance(mParent.getContext());
 			// copy parsed uri params into the view properties 
 			for (Map.Entry<String, String> p : props.entrySet()) {
 				Property<T, String> property = Property.of(cls, String.class, p.getKey());

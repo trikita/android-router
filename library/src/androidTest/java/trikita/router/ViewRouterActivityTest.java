@@ -3,7 +3,6 @@ package trikita.router;
 import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.UiThreadTest;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -13,8 +12,8 @@ import org.junit.Test;
 public class ViewRouterActivityTest extends ActivityInstrumentationTestCase2<FakeActivity> {
 
 	public static class FooView extends View {
-		public FooView(Context c, AttributeSet attrs) {
-			super(c, attrs);
+		public FooView(Context c) {
+			super(c);
 		}
 	}
 
