@@ -24,7 +24,7 @@ public class ViewRouter {
 	final static String KEY_STATE = "state";
 	final static String KEY_BACKSTACK = "backstack";
 
-	private static final Map<Activity, WeakReference<ViewRouter>> CACHE = new WeakHashMap<>();
+	private static final Map<Context, WeakReference<ViewRouter>> CACHE = new WeakHashMap<>();
 
 	private ViewGroup mParent;
 
@@ -35,6 +35,9 @@ public class ViewRouter {
 
 	public ViewRouter(ViewGroup parent) {
 		mParent = parent;
+		if (!CACHE.containsKey(parent.getContext())) {
+			CACHE.put(parent.getContext(), new WeakReference<>(this));
+		}
 	}
 
 	public ViewRouter(Activity a) {
