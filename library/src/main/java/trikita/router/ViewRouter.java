@@ -10,9 +10,12 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.ref.WeakReference;
-import java.util.*;
+import java.lang.ref.SoftReference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.HashMap;
 
 public class ViewRouter {
 	private final static String tag = "ViewRouter";
@@ -24,7 +27,7 @@ public class ViewRouter {
 	final static String KEY_STATE = "state";
 	final static String KEY_BACKSTACK = "backstack";
 
-	private static final Map<Context, WeakReference<ViewRouter>> CACHE = new WeakHashMap<>();
+	private static final Map<Context, SoftReference<ViewRouter>> CACHE = new WeakHashMap<>();
 
 	private ViewGroup mParent;
 
@@ -36,18 +39,18 @@ public class ViewRouter {
 	public ViewRouter(ViewGroup parent) {
 		mParent = parent;
 		if (!CACHE.containsKey(parent.getContext())) {
-			CACHE.put(parent.getContext(), new WeakReference<>(this));
+			CACHE.put(parent.getContext(), new SoftReference<>(this));
 		}
 	}
 
 	public ViewRouter(Activity a) {
-		CACHE.put(a, new WeakReference<>(this));
+		CACHE.put(a, new SoftReference<>(this));
 		mParent = new FrameLayout(a);
 		a.setContentView(mParent);
 	}
 
 	public static ViewRouter get(View v) {
-		WeakReference<ViewRouter> ref = CACHE.get(v.getContext());
+		SoftReference<ViewRouter> ref = CACHE.get(v.getContext());
 		return (ref != null ? ref.get() : null);
 	}
 
