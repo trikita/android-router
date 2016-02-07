@@ -64,6 +64,14 @@ public class ViewRouter {
 		return route(uri, 0);
 	}
 
+	public String route() {
+		if (mBackstack.size() > 0) {
+			return mBackstack.get(mBackstack.size() - 1);
+		} else {
+			return null;
+		}
+	}
+
 	public boolean route(String uri, int flags) {
 		Map<String, String> properties = new HashMap<String, String>();
 
